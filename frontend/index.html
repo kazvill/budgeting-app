@@ -2,26 +2,189 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Budgeting App</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="./styles.css" />
 </head>
+
 <body>
-  <h1>Monthly Budget</h1>
+  <main class="hero">
+    <h1>Monthly Budget Calculator</h1>
 
-  <label>
-    Monthly Income (£)
-    <input id="income" type="number" />
-  </label>
+    <div class="grid-layout">
+      <section class="column">
+        <div class="field">
+          <h2>Income Type</h2>
+          <div class="switch">
+            <span id="labelHourly" class="active">Hourly</span>
+            <input type="checkbox" id="incomeToggle" aria-label="Toggle between hourly and annual income" />
+            <span id="labelAnnual">Annual</span>
+          </div>
+          <div class="option-row">
+            <label class="checkbox">
+              <input type="checkbox" id="taxToggle" checked />
+              <span>Estimate UK tax</span>
+            </label>
+          </div>
+        </div>
 
-  <label>
-    Monthly Expenses (£)
-    <input id="expenses" type="number" />
-  </label>
+        <div class="field" id="hourlyFields">
+          <div class="input-group">
+            <label for="hourlyRate">Hourly Wage</label>
+            <input
+              id="hourlyRate"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="e.g. 15.00"
+              inputmode="decimal"
+            />
+          </div>
+          <div class="input-group">
+            <label for="hoursPerWeek">Contracted Hours per Week</label>
+            <input
+              id="hoursPerWeek"
+              type="number"
+              min="0"
+              max="168"
+              step="0.5"
+              placeholder="e.g. 40"
+              inputmode="decimal"
+            />
+          </div>
+        </div>
 
-  <button id="calcBtn">Calculate</button>
+        <div class="field" id="annualFields" style="display: none;">
+          <div class="input-group">
+            <label for="annualSalary">Annual Salary</label>
+            <input
+              id="annualSalary"
+              type="number"
+              min="0"
+              step="1"
+              placeholder="e.g. 45000"
+              inputmode="numeric"
+            />
+          </div>
+        </div>
+      </section>
 
-  <p id="result"></p>
+      <section class="column">
+        <div class="field">
+          <h2>Subscriptions</h2>
 
-  <script src="script.js"></script>
+          <div class="input-group">
+            <label for="subName">Subscription Name</label>
+            <input
+              id="subName"
+              type="text"
+              placeholder="e.g. Netflix"
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="subAmount">Monthly Cost (£)</label>
+            <input
+              id="subAmount"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="e.g. 10.99"
+              inputmode="decimal"
+            />
+          </div>
+
+          <div class="add-btn-wrapper">
+            <button id="addSubBtn" class="primary-btn add-btn">+</button>
+          </div>
+        </div>
+
+        <div class="field" id="subscriptionsSection" style="display:none;">
+          <ul id="subscriptionsList" class="clean-list"></ul>
+          <div class="result" id="subscriptionsTotal"></div>
+        </div>
+
+        <div class="field">
+          <h2>Annual Costs</h2>
+
+          <div class="input-group">
+            <label for="annualCostName">Expense Name</label>
+            <input
+              id="annualCostName"
+              type="text"
+              placeholder="e.g. Car Insurance"
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="annualCostAmount">Annual Cost (GBP)</label>
+            <input
+              id="annualCostAmount"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="e.g. 480"
+              inputmode="decimal"
+            />
+          </div>
+
+          <div class="add-btn-wrapper">
+            <button id="addAnnualCostBtn" class="primary-btn add-btn">+</button>
+          </div>
+        </div>
+
+        <div class="field" id="annualCostsSection" style="display:none;">
+          <ul id="annualCostsList" class="clean-list"></ul>
+          <div class="result" id="annualCostsTotal"></div>
+        </div>
+      </section>
+
+      <section class="column">
+        <div class="field">
+          <h2>Current Balance</h2>
+          <div class="input-group">
+            <label for="currentBalance">Current Account Balance (GBP)</label>
+            <input
+              id="currentBalance"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="e.g. 2500"
+              inputmode="decimal"
+            />
+          </div>
+        </div>
+
+        <div class="result" id="resultContainer">
+          <span class="result-empty">Enter your income details above</span>
+        </div>
+
+        <div class="field">
+          <h2>Projections</h2>
+          <div class="pill-row" id="projectionOptions">
+            <button class="pill active" data-months="3">3 months</button>
+            <button class="pill" data-months="6">6 months</button>
+            <button class="pill" data-months="12">12 months</button>
+            <button class="pill" data-months="24">24 months</button>
+          </div>
+          <div class="result" id="projectionResult">
+            <span class="result-empty">Enter your income details above</span>
+          </div>
+          <div class="chart-card">
+            <canvas id="projectionChart" height="180"></canvas>
+          </div>
+        </div>
+
+        <button id="exportPdfBtn" class="primary-btn export-btn">Export to PDF</button>
+      </section>
+    </div>
+  </main>
+
+  <div id="pdfExportContainer" class="pdf-export"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
+  <script src="./script.js"></script>
 </body>
+</html>
 </html>

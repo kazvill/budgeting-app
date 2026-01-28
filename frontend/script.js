@@ -1,7 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Configuration - update this URL when deploying backend to Render
-  const API_URL = ""; // Frontend-only mode; keep empty to avoid backend calls
-
   // DOM Elements
   const toggle = document.getElementById("incomeToggle");
   const taxToggle = document.getElementById("taxToggle");
@@ -137,68 +134,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Calls the backend API to calculate income and tax
-   */
-  async function calculateViaAPI() {
-    const isAnnual = toggle.checked;
-    let body;
-
-    if (isAnnual) {
-      const annual = parseFloat(annualSalaryInput.value);
-      if (!annual || annual <= 0) return null;
-      body = { income_type: "annual", annual_salary: annual, tax_enabled: taxToggle.checked };
-    } else {
-      const rate = parseFloat(hourlyRateInput.value);
-      const hours = parseFloat(hoursPerWeekInput.value);
-      if (!rate || !hours || rate <= 0 || hours <= 0) return null;
-      body = {
-        income_type: "hourly",
-        hourly_rate: rate,
-        hours_per_week: hours,
-        tax_enabled: taxToggle.checked,
-      };
-    }
-
-    try {
-      const response = await fetch(`${API_URL}/calculate-income`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        console.error("API Error:", error);
-        return null;
-      }
-
-      const data = await response.json();
-      if (!data || !data.gross_monthly_income) return null;
-      return {
-        grossAnnual: data.gross_annual_income,
-        grossMonthly: data.gross_monthly_income,
-        monthlyTax: data.estimated_monthly_tax,
-        netMonthly: data.net_monthly_income,
-        taxEnabled: data.tax_enabled,
-      };
-    } catch (err) {
-      console.error("Network error:", err);
-      return null;
-    }
-  }
-
-  /**
-   * Main calculation function - uses API if configured, otherwise local
+   * Main calculation function - local calculations only
    */
   async function calculateMonthlyIncome() {
-    const localResult = calculateLocally();
-    let result = localResult;
-
-    if (API_URL) {
-      const apiResult = await calculateViaAPI();
-      if (apiResult) result = apiResult;
-    }
-
+    const result = calculateLocally();
     renderResult(result);
     renderProjection(result);
   }
